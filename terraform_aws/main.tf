@@ -8,24 +8,21 @@ Name = "main_vpc"
 } 
 } 
 
-#EC2 instanec
 resource "aws_instance" "web_server" {
-  ami            = "ami-0c55b159cbfafe1f0" # Amazon Linux 2 AMI
-  instance_type  = "t2.micro"
-  subnet_id      = aws_subnet.public_subnet.id
-  security_groups = [aws_security_group.ec2_sg.name]
-  
+  ami             = "ami-0c02fb55956c7d316" # Updated Amazon Linux 2 AMI
+  instance_type   = "t2.micro"
+  subnet_id       = aws_subnet.public_subnet.id
+  vpc_security_group_ids = [aws_security_group.ec2_sg.id]
 
   tags = {
-  Name = "web_server"
-}
-
+    Name = "web_server"
+  }
 }
 
 # RDS Subnet Group
 resource "aws_db_subnet_group" "rds_subnet_group" {
   name       = "rds-subnet-group"
-  subnet_ids = [aws_subnet.private_subnet.id] # Use private subnet
+  subnet_ids = [aws_subnet.private_subnet.id, aws_subnet.public_subnet.id] # RDS requires at least 2 subnets
   tags = {
     Name = "rds-subnet-group"
   }
